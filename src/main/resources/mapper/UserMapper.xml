@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xunmaw.supermarket.dao.UsersDao">
+    <resultMap id="u_r" type="com.xunmaw.supermarket.pojo.User">
+        <id property="id" column="id"/>
+        <result property="userCode" column="userCode"/>
+        <result property="userName" column="userName"/>
+        <result property="userPassword" column="userPassword"/>
+        <result property="userRole" column="userRole"/>
+        <result property="gender" column="gender"/>
+        <result property="birthday" column="birthday"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="creationDate" column="creationDate"/>
+        <result property="createdBy" column="createdBy"/>
+        <association property="role" javaType="com.xunmaw.supermarket.pojo.Role">
+            <result property="roleName" column="roleName"/>
+        </association>
+    </resultMap>
+    <resultMap id="userList" type="com.xunmaw.supermarket.pojo.User" >
+        <id property="id" column="id"/>
+        <result property="id" column="id"/>
+        <result property="userCode" column="userCode"/>
+        <result property="userName" column="userName"/>
+        <result property="userPassword" column="userPassword"/>
+        <result property="gender" column="gender"/>
+        <result property="birthday" column="birthday"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="userRole" column="userRole"/>
+        <result property="createdBy" column="createdBy"/>
+        <result property="creationDate" column="creationDate"/>
+        <result property="modifyBy" column="modifyBy"/>
+        <result property="modifyDate" column="modifyDate"/>
+        <result property="creationDate" column="creationDate"/>
+        <association property="role" javaType="com.xunmaw.supermarket.pojo.Role">
+            <result property="roleName" column="roleName"/>
+        </association>
+    </resultMap>
+    <select id="countUser" resultType="int">
+        select count(*) from smbms_user
+    </select>
+    <select id="getUserCount" resultType="int">
+        select count(*) from smbms_user
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="userName!=null and userName!=''">
+                    AND userName=#{userName}
+                </if>
+                <if test="userRole!=null and userRole!=''">
+                    AND userRole=#{userRole}
+                </if>
+            </trim>
+        </where>
+    </select>
+    <select id="getUserList" resultMap="userList">
+        select u.*,r.roleName
+        from smbms_user u,smbms_role r
+        <where>
+            u.userRole = r.id
+            <if test="userCode!=null and userCode!=''">
+                and u.userCode like CONCAT ("%",#{userCode},"%")
+            </if>
+            <if test="userRole>0">
+                and u.userRole = #{userRole}
+            </if>
+        </where>
+        order by creationDate DESC limit #{currentPageNo},#{pageSize}
+    </select>
+    <select id="getUserById" resultMap="u_r">
+        select u.*,r.roleName
+        from smbms_user u,smbms_role r
+        where u.id=#{id} and u.userRole = r.id
+    </select>
+    <select id="getLoginUser" resultType="com.xunmaw.supermarket.pojo.User">
+        select * from smbms_user
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="userCode!=null and userCode!=''">
+                    AND userCode=#{userCode}
+                </if>
+                <if test="userPassword!=null and userPassword!=''">
+                    AND userPassword=#{userPassword}
+                </if>
+            </trim>
+        </where>
+    </select>
+    <select id="getAllUser" resultType="com.xunmaw.supermarket.pojo.User">
+        select * from smbms_user
+    </select>
+    <delete id="deleteUserById" parameterType="int">
+        DELETE FROM smbms_user WHERE id=#{delId}
+    </delete>
+    <insert id="add" parameterType="com.xunmaw.supermarket.pojo.User" useGeneratedKeys="true">
+        insert into smbms_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userCode != null">
+                userCode,
+            </if>
+            <if test="userName != null">
+                userName,
+            </if>
+            <if test="userPassword != null">
+                userPassword,
+            </if>
+            <if test="gender != null">
+                gender,
+            </if>
+            <if test="birthday != null">
+                birthday,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="userRole != null">
+                userRole,
+            </if>
+            <if test="createdBy != null">
+                createdBy,
+            </if>
+            <if test="creationDate != null">
+                creationDate,
+            </if>
+            <if test="modifyBy != null">
+                modifyBy,
+            </if>
+            <if test="modifyDate != null">
+                modifyDate,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userCode != null">
+                #{userCode,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPassword != null">
+                #{userPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="gender != null">
+                #{gender,jdbcType=INTEGER},
+            </if>
+            <if test="birthday != null">
+                #{birthday,jdbcType=DATE},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="userRole != null">
+                #{userRole,jdbcType=BIGINT},
+            </if>
+            <if test="createdBy != null">
+                #{createdBy,jdbcType=BIGINT},
+            </if>
+            <if test="creationDate != null">
+                #{creationDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyBy != null">
+                #{modifyBy,jdbcType=BIGINT},
+            </if>
+            <if test="modifyDate != null">
+                #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="modify" parameterType="com.xunmaw.supermarket.pojo.User">
+        update smbms_user
+        <set>
+            <if test="userCode != null">
+                userCode = #{userCode},
+            </if>
+            <if test="userName != null">
+                userName = #{userName},
+            </if>
+            <if test="userPassword != null">
+                userPassword = #{userPassword},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="userRole != null">
+                userRole = #{userRole},
+            </if>
+            <if test="createdBy != null">
+                createdBy = #{createdBy},
+            </if>
+            <if test="creationDate != null">
+                creationDate = #{creationDate},
+            </if>
+            <if test="modifyBy != null">
+                modifyBy = #{modifyBy},
+            </if>
+            <if test="modifyDate != null">
+                modifyDate = #{modifyDate},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updatePwd">
+        update smbms_user set userPassword=#{pwd} where id=#{id}
+    </update>
+</mapper>

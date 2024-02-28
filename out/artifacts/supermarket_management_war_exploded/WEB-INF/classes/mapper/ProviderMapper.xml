@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xunmaw.supermarket.dao.ProviderDao">
+    <resultMap id="providerList" type="com.xunmaw.supermarket.pojo.Provider">
+        <id property="id" column="id"/>
+        <result property="proCode" column="proCode"/>
+        <result property="proName" column="proName"/>
+        <result property="proDesc" column="proDesc"/>
+        <result property="proContact" column="proContact"/>
+        <result property="proPhone" column="proPhone"/>
+        <result property="proAddress" column="proAddress"/>
+        <result property="proFax" column="proFax"/>
+    </resultMap>
+    <resultMap id="providerAndBillList" type="com.xunmaw.supermarket.pojo.Provider">
+        <id property="id" column="id"/>
+        <result property="proCode" column="proCode"/>
+        <result property="proName" column="proName"/>
+        <result property="proContact" column="proContact"/>
+        <result property="proPhone" column="proPhone"/>
+<!--        <collection property="bill" ofType="Bill" resultMap="billResult"/>-->
+    </resultMap>
+    <resultMap id="billResult" type="com.xunmaw.supermarket.pojo.Bill">
+        <id property="id" column="bid"/>
+        <result property="billCode" column="billCode"/>
+        <result property="productName" column="productName"/>
+        <result property="totalPrice" column="totalPrice"/>
+        <result property="isPayment" column="isPayment"/>
+    </resultMap>
+
+    <select id="countProvider" resultType="int">
+        select count(*) from smbms_provider
+    </select>
+    <select id="getProviderById" resultMap="providerList">
+        select * from smbms_provider WHERE id=#{id}
+    </select>
+    <select id="getProviderAndBillListById" resultMap="providerAndBillList">
+        select b.id bid,p.id pid,p.*,b.*
+        from smbms_provider p,smbms_bill b
+        WHERE p.id=#{pid} AND b.providerId=p.id
+    </select>
+    <select id="getAllProvider" resultMap="providerList">
+        select * from smbms_provider
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="proName!=null and proName!=''">
+                    AND proName LIKE CONCAT('%',#{proName},'%')
+                </if>
+                <if test="proCode!=null and proCode!=''">
+                    AND proCode LIKE CONCAT('%',#{proCode},'%')
+                </if>
+            </trim>
+        </where>
+        order by id DESC
+    </select>
+    <insert id="add" parameterType="com.xunmaw.supermarket.pojo.Provider">
+        insert into smbms_provider(proCode,proName,proDesc,proContact,proPhone,proAddress,proFax,createdBy,creationDate)
+        values (#{proCode},#{proName},#{proDesc},#{proContact},#{proPhone},#{proAddress},#{proFax},#{createdBy},#{creationDate})
+    </insert>
+    <update id="modify" parameterType="com.xunmaw.supermarket.pojo.Provider">
+        update smbms_provider
+        <set>
+            <if test="proCode != null">
+                proCode = #{proCode},
+            </if>
+            <if test="proName != null">
+                proName = #{proName},
+            </if>
+            <if test="proDesc != null">
+                proDesc = #{proDesc},
+            </if>
+            <if test="proContact != null">
+                proContact = #{proContact},
+            </if>
+            <if test="proPhone != null">
+                proPhone = #{proPhone},
+            </if>
+            <if test="proAddress != null">
+                proAddress = #{proAddress},
+            </if>
+            <if test="proFax != null">
+                proFax = #{proFax},
+            </if>
+            <if test="modifyBy != null">
+                modifyBy = #{modifyBy},
+            </if>
+            <if test="modifyDate != null">
+                modifyDate = #{modifyDate},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <delete id="delete">
+        delete from smbms_provider
+        where id=#{id}
+    </delete>
+</mapper>

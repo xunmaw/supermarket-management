@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--<settings>-->
+    <!--<setting name="logImpl" value="LOG4J"/>-->
+    <!--&lt;!&ndash;<setting name="autoMappingBehavior" value="NONE"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;<setting name="cacheEnabled" value="true"/>&ndash;&gt;-->
+    <!--</settings>-->
+    <!--实体类别名-->
+    <typeAliases>
+        <typeAlias type="com.xunmaw.supermarket.pojo.User" alias="User"/>
+        <typeAlias type="com.xunmaw.supermarket.pojo.Provider" alias="Provider"/>
+        <typeAlias type="com.xunmaw.supermarket.pojo.Role" alias="Role"/>
+        <typeAlias type="com.xunmaw.supermarket.pojo.Bill" alias="Bill"/>
+    </typeAliases>
+    <!-- 分页插件 -->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
+    </plugins>
+
+</configuration>

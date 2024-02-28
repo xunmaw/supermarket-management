@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xunmaw.supermarket.dao.RoleDao">
+    <resultMap id="userListOfRole" type="com.xunmaw.supermarket.pojo.Role">
+        <id property="id" column="id"/>
+        <result property="roleCode" column="roleCode"/>
+        <result property="roleName" column="roleName"/>
+        <result property="createdBy" column="createdBy"/>
+        <result property="creationDate" column="creationDate"/>
+        <result property="modifyBy" column="modifyBy"/>
+        <result property="modifyDate" column="modifyDate"/>
+    </resultMap>
+    <select id="getRoleList" resultMap="userListOfRole">
+        select * from smbms_role;
+    </select>
+</mapper>

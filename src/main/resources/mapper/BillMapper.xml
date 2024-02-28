@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xunmaw.supermarket.dao.BillDao">
+    <resultMap id="billList" type="com.xunmaw.supermarket.pojo.Bill" autoMapping="false">
+        <id property="id" column="id"/>
+        <result property="billCode" column="billCode"/>
+        <result property="productName" column="productName"/>
+        <result property="providerName" column="proName"/>
+        <result property="totalPrice" column="totalPrice"/>
+        <result property="isPayment" column="isPayment"/>
+        <result property="creationDate" column="creationDate"/>
+    </resultMap>
+    <resultMap id="billList2" type="com.xunmaw.supermarket.pojo.Bill" autoMapping="false">
+        <result property="billCode" column="billCode"/>
+        <result property="productName" column="productName"/>
+        <result property="totalPrice" column="totalPrice"/>
+        <result property="isPayment" column="isPayment"/>
+        <association property="providerId" javaType="com.xunmaw.supermarket.pojo.Provider">
+            <result property="proName" column="proName"/>
+            <result property="proCode" column="proCode"/>
+            <result property="proContact" column="proContact"/>
+            <result property="proPhone" column="proPhone"/>
+        </association>
+    </resultMap>
+
+    <!--    <select id="selectBill" parameterType="Map" resultMap="billList">-->
+    <!--        select * from smbms_bill as b,smbms_provider as p-->
+    <!--        where b.productName like CONCAT('%',#{productName},'%') and b.providerId=#{providerId} and b.isPayment=#{payFlag} and b.providerId=p.id-->
+    <!--    </select>-->
+    <select id="selectBill" parameterType="Map" resultMap="billList2">
+        select * from smbms_bill as b,smbms_provider as p
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="productName!=null and productName!=''">
+                    AND b.productName  like CONCAT('%',#{productName},'%')
+                </if>
+                <if test="providerId!=null and providerId!=''">
+                    AND  b.providerId=#{providerId}
+                </if>
+                <if test="payFlag!=null and payFlag!=-1">
+                    AND b.isPayment=#{payFlag}
+                </if>
+                AND b.providerId=p.id
+            </trim>
+        </where>
+    </select>
+    <insert id="add" parameterType="com.xunmaw.supermarket.pojo.Bill">
+        insert into smbms_bill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="billCode != null">
+                billCode,
+            </if>
+            <if test="productName != null">
+                productName,
+            </if>
+            <if test="productDesc != null">
+                productDesc,
+            </if>
+            <if test="productUnit != null">
+                productUnit,
+            </if>
+            <if test="productCount != null">
+                productCount,
+            </if>
+            <if test="totalPrice != null">
+                totalPrice,
+            </if>
+            <if test="isPayment != null">
+                isPayment,
+            </if>
+            <if test="providerId != null">
+                providerId,
+            </if>
+            <if test="createdBy != null">
+                createdBy,
+            </if>
+            <if test="creationDate != null">
+                creationDate,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="billCode != null">
+                #{billCode},
+            </if>
+            <if test="productName != null">
+                #{productName},
+            </if>
+            <if test="productDesc != null">
+                #{productDesc},
+            </if>
+            <if test="productUnit != null">
+                #{productUnit},
+            </if>
+            <if test="productCount != null">
+                #{productCount},
+            </if>
+            <if test="totalPrice != null">
+                #{totalPrice},
+            </if>
+            <if test="isPayment != null">
+                #{isPayment},
+            </if>
+            <if test="providerId != null">
+                #{providerId},
+            </if>
+            <if test="createdBy != null">
+                #{createdBy},
+            </if>
+            <if test="creationDate != null">
+                #{creationDate},
+            </if>
+        </trim>
+    </insert>
+    <select id="getBillList" resultMap="billList">
+        select b.*,p.proName
+        from smbms_bill b, smbms_provider p
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="productName!=null and productName!=''">
+                    AND  productName like CONCAT('%',#{productName},'%')
+                </if>
+                <if test="providerId!=null and providerId>0">
+                    AND providerId = #{providerId}
+                </if>
+                <if test="isPayment!=null and isPayment>0">
+                    AND isPayment=#{isPayment}
+                </if>
+
+                AND b.providerId = p.id
+            </trim>
+        </where>
+    </select>
+    <delete id="deleteBillById">
+        delete from smbms_bill where id=#{id}
+    </delete>
+    <select id="getBillById" resultType="com.xunmaw.supermarket.pojo.Bill">
+        select b.*,p.proName as providerName
+        from smbms_bill b, smbms_provider p
+        where b.providerId = p.id and b.id=#{id}
+    </select>
+    <update id="modify" parameterType="com.xunmaw.supermarket.pojo.Bill">
+        update smbms_bill
+        <set>
+            <if test="productName != null">
+                productName=#{productName},
+            </if>
+            <if test="productDesc != null">
+                productDesc=#{productDesc},
+            </if>
+            <if test="productUnit != null">
+                productUnit=#{productUnit},
+            </if>
+            <if test="productCount != null">
+                productCount=#{productCount},
+            </if>
+            <if test="totalPrice != null">
+                totalPrice=#{totalPrice},
+            </if>
+            <if test="isPayment != null">
+                isPayment=#{isPayment},
+            </if>
+            <if test="providerId != null">
+                providerId=#{providerId},
+            </if>
+            <if test="modifyBy != null">
+                modifyBy=#{modifyBy},
+            </if>
+            <if test="modifyDate != null">
+                modifyDate=#{modifyDate},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <select id="getBillCountByProviderId">
+        select count(1) as billCount
+        from smbms_bill
+        where providerId = #{providerId}
+    </select>
+</mapper>
